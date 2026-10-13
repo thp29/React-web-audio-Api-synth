@@ -1,0 +1,231 @@
+/* ==========================================================================
+   Variables globales & Thème Hardware Audio
+   ========================================================================== */
+:root {
+  --bg-app: #121316;
+  --bg-panel: #1e2025;
+  --bg-keyboard-bed: #14151a;     /* Fond creusé pour le clavier */
+  --bg-control: #2b2e36;
+  --border-panel: #3a3e4a;
+  --border-subtle: #292c35;
+
+  --text-main: #b3d2ff;
+  --text-muted: #b3c0db;
+  --accent-active: #ff5722;       /* Orange vif pour l'état actif */
+  --accent-focus: #00d2ff;        /* Cyan pour le focus clavier */
+  --track-active: #4a5060;
+
+  --font-stack: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* ==========================================================================
+   Base & Disposition
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: var(--font-stack);
+  line-height: 1.6;
+}
+
+.synthe-container {
+  width: min(90vw, 750px);
+  margin: 2rem auto;
+  padding: 2.25rem;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.55);
+}
+
+h1 {
+  margin: 0 0 1.75rem 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-panel);
+  padding-bottom: 0.75rem;
+  text-shadow: 0 2px 10px rgba(0, 210, 255, 0.2);
+}
+
+/* ==========================================================================
+   Section Clavier Musical
+   ========================================================================== */
+.section-clavier {
+  margin-bottom: 2.25rem;
+  padding: 1.25rem 1.5rem 1.5rem 1.5rem;
+  background-color: var(--bg-keyboard-bed);
+  border: 2px solid var(--border-panel);
+  border-radius: 8px;
+  /* Effet de baie encastrée (ombre intérieure + liseré supérieur) */
+  box-shadow: 
+    inset 0 4px 10px rgba(0, 0, 0, 0.7),
+    0 1px 0 rgba(255, 255, 255, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 6px; /* Fin interstice entre les touches de piano */
+}
+
+/* La touche blanche de piano */
+.section-clavier button {
+  flex: 1;
+  max-width: 80px;
+  min-height: 125px; /* Touche allongée verticalement */
+  padding: 0 0 0.85rem 0;
+  
+  /* Disposition du label de la note vers le bas de la touche */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-stack);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+
+  /* Teinte ivoire / blanc crème avec dégradé vertical */
+  background: linear-gradient(180deg, #f7f8fa 0%, #e2e5eb 85%, #cfd4df 100%);
+  color: #1a1c22;
+  border: 1px solid #9aa0af;
+  border-top: 2px solid #5a5f6e; /* Jointure supérieure foncée */
+  border-radius: 0 0 5px 5px;   /* Arrondi uniquement au bas de la touche */
+
+  /* Relief de tranche 3D */
+  box-shadow: 
+    0 4px 0 #8b919e,
+    0 6px 8px rgba(0, 0, 0, 0.4);
+  
+  transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.05s ease;
+}
+
+.section-clavier button:hover {
+  background: #b5f1ff;
+}
+
+/* Enfoncement mécanique : au clic (active) ou quand la note est jouée */
+.section-clavier button:active,
+.section-clavier button.btn-actif {
+  transform: translateY(3px); /* La touche s'abaisse */
+  background: linear-gradient(180deg, #e9edf5 0%, #d8dde8 100%);
+  /* L'ombre de tranche s'écrase */
+  box-shadow: 
+    0 1px 0 #7b818e,
+    inset 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================================================
+   Section Réglages & Faders
+   ========================================================================== */
+.reglages-section {
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-panel);
+}
+
+.section-Fader {
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+}
+
+.section-Fader label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 0 0 240px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.fader-icon {
+  height: 2.2rem;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* Slider / Rail */
+.section-Fader input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--track-active);
+  outline: none;
+  cursor: pointer;
+}
+
+/* Curseur (Thumb) Chrome / Edge / Safari */
+.section-Fader input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: hsl(210, 60%, var(--thumb-lightness, 85%));
+  border: 2px solid var(--bg-panel);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.section-Fader input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+/* Curseur (Thumb) Firefox */
+.section-Fader input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: hsl(210, 60%, var(--thumb-lightness, 85%));
+  border: 2px solid var(--bg-panel);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+  cursor: grab;
+}
+
+.section-Fader input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.15);
+}
+
+/* ==========================================================================
+   Accessibilité Clavier & Préférences
+   ========================================================================== */
+button:focus-visible,
+input[type="range"]:focus-visible {
+  outline: 3px solid var(--accent-focus);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
