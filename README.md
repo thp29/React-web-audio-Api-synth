@@ -45,5 +45,4 @@ CSS3 moderne
 
 [ ] Sauvegarde de presets utilisateur, en local via Node JS
 
-[ ] Choix de la forme d'onde
 
