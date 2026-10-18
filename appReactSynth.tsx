@@ -21,17 +21,18 @@ const etatInitSynth: etatSynth = {
 interface musicKey {
     note : string;
     freq : number;
+    key : string;
 }
 
 // declaration dobjets de type "musicKey"!, en type tableau
 const musicKeys : musicKey[] =[
-{note : "DO", freq: 261.6},
-{note : "RE", freq: 293.7},
-{note : "MI", freq: 329.6},
-{note : "FA", freq: 349.2},
-{note : "SOL", freq: 392.0},
-{note : "LA", freq: 440},
-{note : "SI", freq: 493.88},
+{note : "DO", freq: 261.6, key :"a"},
+{note : "RE", freq: 293.7, key :"z"},
+{note : "MI", freq: 329.6,key :"e" },
+{note : "FA", freq: 349.2, key :"r"},
+{note : "SOL", freq: 392.0, key: "t"},
+{note : "LA", freq: 440, key :"y"},
+{note : "SI", freq: 493.88, key :"u"},
 ];
 
 
@@ -53,6 +54,8 @@ import React, { useState } from "react";
 
 import { useRef } from "react";
 // useRef permet garder objet, sans provoquer de nouveau "rendu" visuel à chaque changement de lobjet , contrainement à useState
+
+import { useEffect } from "react";
 
 
 
@@ -193,14 +196,15 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
             // 3. On applique la nouvelle cible avec une constante douce (20 ms)
         gainAudio.setTargetAtTime(etat.volume, temps, 0.02);
 
-        setEtat( {...etat, isPlaying:true});
+        //setEtat( {...etat, isPlaying:true});
+        setEtat((prev) => ({ ...prev, isPlaying: true }));
     }
    }
 
    // couper son quand "bouton" note "relaché par user"
    const arreterNote = () : void =>
    {
-    if (gainRef.current !==null && ctxWebAudioAPIRef.current !== null && etat.isPlaying)
+    if (gainRef.current !==null && ctxWebAudioAPIRef.current !== null )
         {
 
             const temps = ctxWebAudioAPIRef.current.currentTime;
@@ -215,7 +219,8 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
             // 3. On applique la nouvelle cible avec une constante douce (20 ms)
             gainAudio.setTargetAtTime(0, temps, 0.02);
 
-            setEtat ( {...etat, isPlaying : false} );
+            setEtat((prev) => ({ ...prev, isPlaying: false}));
+            //setEtat ( {...etat, isPlaying : false} );
         };
    }
    
@@ -305,6 +310,44 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
 
     };
 
+
+    // "hook react" de type useEffect, pour ecouter evenements sur fenetre globales (ici des keydown ou up, => touches clavier!=)
+     useEffect(() => {
+   
+        // si touche enfoncee
+      const gererToucheDown = (event: KeyboardEvent) => {
+      if (event.repeat) return; // si event en boucle on sort
+
+      const noteTrouvee = musicKeys.find((item) => item.key === event.key.toLowerCase());
+    
+
+      if (noteTrouvee) // si une dans tab "music key" parcoure par find, on trouve 1 touche enfoncee correspondant a une "note" possible
+      {
+        jouerNote(noteTrouvee.freq);
+      }
+      };
+
+      // si touche plus enfoncee ! : 
+    const gererToucheUp = (event: KeyboardEvent) => {
+      if (event.repeat) return;
+
+      const noteTrouvee = musicKeys.find((item) => item.key === event.key.toLowerCase());
+    
+      if (noteTrouvee)
+      {
+        arreterNote();
+      }
+      };
+    
+    window.addEventListener("keydown", gererToucheDown);
+    window.addEventListener("keyup", gererToucheUp);
+
+    // 2. Nettoyage : React appelle cette fonction si le composant disparaît
+    return () => {
+      window.removeEventListener("keydown", gererToucheDown);
+      window.removeEventListener("keyup", gererToucheUp);
+    };
+  } , []); // 3. Le tableau vide [] signifie : "exécute ce bloc une seule fois au chargement"
    
     // ZONE 3 : Le rendu visuel (l'équivalent du HTML)
     // {} dans les accolades en JSX = -> code javascript
@@ -381,3 +424,4 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
     );
 
 };
+
