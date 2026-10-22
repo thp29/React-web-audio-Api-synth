@@ -9,7 +9,7 @@ interface  etatSynth { // on verrouille la forme des données pour éviter les b
 }
 
 const etatInitSynth: etatSynth = {
-    typeOnde : "square",
+    typeOnde : "sawtooth",
     freqeOsc :220,
     cutoff : 500,
     volume : 0.5,
@@ -115,8 +115,8 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
     // référence vers "noeud Web audio" filtre biquad
     const filterCutoffRef = useRef <BiquadFilterNode |null> (null);
 
-
-
+    // ref react vers volume pour debug volume quand appui touche clavier via UseEffect, qui prend en compte letat init du "synth" au 1ER "lancement du composant "synth""!"
+    const volumeRef = useRef <number>(etatInitSynth.volume);
 
 
     // ZONE 2 : Les fonctions d'actions et la logique
@@ -163,9 +163,8 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
 
         initSyntheAudio();
 
-        // si note enclenche par user, on met a jour composant use ref avec nouvelle freq recue de cette note enclecnhée !
-        setEtat({...etat,freqeOsc : freqSelKey});
-
+    
+        //setEtat({...etat,freqeOsc : freqSelKey});
 
 //quand "new AudioContext()" =>, les navigateurs le placent souvent par défaut dans l'état "suspended" (en pause) tant qu'il n'est pas réveillé explicitement.
             if (ctxWebAudioAPIRef.current && ctxWebAudioAPIRef.current.state === "suspended") {
@@ -182,7 +181,7 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
         oldOscFrequence.setTargetAtTime(freqSelKey,temps,0.02);
 
         // puis on ouvre son gain
-        gainRef.current.gain.value=etat.volume;
+        gainRef.current.gain.value=volumeRef.current;
 
         temps = ctxWebAudioAPIRef.current.currentTime;
         const gainAudio = gainRef.current.gain;
@@ -194,10 +193,10 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
         gainAudio.setValueAtTime(gainAudio.value, temps);
 
             // 3. On applique la nouvelle cible avec une constante douce (20 ms)
-        gainAudio.setTargetAtTime(etat.volume, temps, 0.02);
+        gainAudio.setTargetAtTime(volumeRef.current, temps, 0.02);
 
         //setEtat( {...etat, isPlaying:true});
-        setEtat((prev) => ({ ...prev, isPlaying: true }));
+        setEtat((prev) => ({ ...prev,freqeOsc:freqSelKey, isPlaying: true })); // on met a jour composant use ref avec nouvelle freq recue de cette note enclecnhée !
     }
    }
 
@@ -230,6 +229,10 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
         setEtat ( {...etat, volume : nouveauVolume } ); 
         //  fonction "set etat" de react on change le param voulu , -> de lobjet "etat" recupere juste avant par fonction "UseState"!, ici donc -> change letat de "etatinit synth"
      //  fonction "set etat" de react on change le param voulu , -> de lobjet "etat" recupere juste avant par fonction "UseState"!, ici donc -> change letat de "etatinit synth"
+
+
+        //  on stocke "nouveau volume", si on a bouge fader, dans Ref Volume
+        volumeRef.current =nouveauVolume;
 
      // pour MAJ gainref composant react , si on est en "play" donc pas dans fonction "Toogleplay" desssous, on doit quand meme pouvoir changer volume et que ca soit aussi pris en compte par le "noeud gain" et pas juste visuel !
         if (gainRef.current !==null && ctxWebAudioAPIRef.current !== null && etat.isPlaying)
@@ -353,7 +356,7 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
     // {} dans les accolades en JSX = -> code javascript
     return (
         <main className="synthe-container">
-            <h1>My first Web Audio Synth</h1>
+            <h1>My Web Audio Synth</h1>
 
             {/* Contrôle Play / Stop */}
             <section className="section-clavier">
