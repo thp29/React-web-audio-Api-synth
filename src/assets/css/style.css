@@ -35,7 +35,9 @@ body {
   background-color: var(--bg-app);
   color: var(--text-main);
   font-family: var(--font-stack);
+  font-size: 120%;
   line-height: 1.6;
+  letter-spacing: 0.1rem;
 }
 
 .synthe-container {
@@ -75,16 +77,19 @@ h1 {
     inset 0 4px 10px rgba(0, 0, 0, 0.7),
     0 1px 0 rgba(255, 255, 255, 0.05);
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: flex-start;
-  gap: 6px; /* Fin interstice entre les touches de piano */
+  gap: 1rem; /* pour delimitation claire entre touches et accessbilité */
 }
 
 /* La touche blanche de piano */
 .section-clavier button {
   flex: 1;
-  max-width: 80px;
-  min-height: 125px; /* Touche allongée verticalement */
+  min-width: 3rem; /*niveau AAA WCAG Boutons taille access cognitive*/
+  min-height: 3rem;
+ /* max-width: 80px;
+  min-height: 125px; /* Touche allongée verticalement */ 
   padding: 0 0 0.85rem 0;
   
   /* Disposition du label de la note vers le bas de la touche */
