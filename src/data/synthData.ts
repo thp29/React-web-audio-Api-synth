@@ -1,4 +1,4 @@
-import "./src/types/synth.ts";
+import  {etatSynth, musicKey} from "../types/synth";
 
 export const etatInitSynth: etatSynth = {
     typeOnde : "sawtooth",
