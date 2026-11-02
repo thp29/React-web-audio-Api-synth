@@ -281,8 +281,10 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
                         type="button" 
                         key= {noteLue.note} // key = proprioete exigee par React quand boucle genere des composants, pour qu ils aient un "id" unique, si besoin de les MAJ 
                         onMouseDown= {() => jouerNote(noteLue.freq)} 
+                        onTouchStart= {()=>jouerNote(noteLue.freq)}
                         onMouseLeave={arreterNote}
                         onMouseUp={arreterNote}
+                        onTouchEnd={arreterNote}
                         className={etat.isPlaying ? "btn-actif" : "btn-inactif"}>
                         {noteLue.note}    
                         </button>

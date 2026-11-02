@@ -4,6 +4,7 @@ export interface  etatSynth { // on verrouille la forme des données pour évite
     cutoff : number;
     volume : number;
     isPlaying : boolean;
+    notePlayed: string | null;
 }
 
 

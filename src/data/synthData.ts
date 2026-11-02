@@ -5,7 +5,8 @@ export const etatInitSynth: etatSynth = {
     freqeOsc :220,
     cutoff : 500,
     volume : 0.5,
-    isPlaying : false
+    isPlaying : false,
+    notePlayed: null
 };
 
 // declaration dobjets de type "musicKey"!, en type tableau
