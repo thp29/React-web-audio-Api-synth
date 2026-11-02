@@ -73,7 +73,7 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
 
 
 // jouer note si note encleche par user
-   const jouerNote = (freqSelKey : number): void => {
+   const jouerNote = (freqSelKey : number, nomNote:string): void => {
 
         initSyntheAudio();
 
@@ -110,7 +110,7 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
         gainAudio.setTargetAtTime(volumeRef.current, temps, 0.02);
 
         //setEtat( {...etat, isPlaying:true});
-        setEtat((prev) => ({ ...prev,freqeOsc:freqSelKey, isPlaying: true })); // on met a jour composant use ref avec nouvelle freq recue de cette note enclecnhée !
+        setEtat((prev) => ({ ...prev,freqeOsc:freqSelKey, isPlaying: true, notePlayed:nomNote })); // on met a jour composant use ref avec nouvelle freq recue de cette note enclecnhée !
     }
    }
 
@@ -240,7 +240,7 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
 
       if (noteTrouvee) // si une dans tab "music key" parcoure par find, on trouve 1 touche enfoncee correspondant a une "note" possible
       {
-        jouerNote(noteTrouvee.freq);
+        jouerNote(noteTrouvee.freq, noteTrouvee.note);
       }
       };
 
@@ -266,6 +266,8 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
     };
   } , []); // 3. Le tableau vide [] signifie : "exécute ce bloc une seule fois au chargement"
    
+
+
     // ZONE 3 : Le rendu visuel (l'équivalent du HTML)
     // {} dans les accolades en JSX = -> code javascript
     return (
@@ -280,12 +282,12 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
                         <button 
                         type="button" 
                         key= {noteLue.note} // key = proprioete exigee par React quand boucle genere des composants, pour qu ils aient un "id" unique, si besoin de les MAJ 
-                        onMouseDown= {() => jouerNote(noteLue.freq)} 
-                        onTouchStart= {()=>jouerNote(noteLue.freq)}
+                        onMouseDown= {() => jouerNote(noteLue.freq,noteLue.note)} 
+                        onTouchStart= {()=>jouerNote(noteLue.freq,noteLue.note)}
                         onMouseLeave={arreterNote}
                         onMouseUp={arreterNote}
                         onTouchEnd={arreterNote}
-                        className={etat.isPlaying ? "btn-actif" : "btn-inactif"}>
+                        className={etat.notePlayed===noteLue.note ? "btn-actif" : "btn-inactif"}>
                         {noteLue.note}    
                         </button>
                     ))
