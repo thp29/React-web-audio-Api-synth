@@ -1,4 +1,4 @@
-import "./style.css";
+import "./assets/css/style.css";
 
 import React, { useState } from "react";
 
@@ -7,11 +7,11 @@ import { useRef } from "react";
 
 import { useEffect } from "react";
 
-import { etatInitSynth,musicKeys } from "./src/data/synthData";
+import { etatInitSynth,musicKeys } from "./data/synthData";
 
-import {etatSynth} from "./src/types/synth";
+import {etatSynth} from "./types/synth";
 
-import { ControlFader } from "./src/components/ControlFader";
+import { ControlFader } from "./components/ControlFader";
 
 
 export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psuedo html)

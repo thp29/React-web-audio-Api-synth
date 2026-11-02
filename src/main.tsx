@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { MiniSynthe } from "../appReactSynth";
+import { MiniSynthe } from "./appReactSynth";
 
 const rootElement = document.getElementById("root");
 

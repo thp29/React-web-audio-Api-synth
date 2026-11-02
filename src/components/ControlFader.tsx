@@ -31,7 +31,7 @@ export const ControlFader: React.FC<ControlFaderProps> = ({
     return (
         <section className="section-Fader">
             <label htmlFor={id}>
-                <img className="fader-icon" src="fader_icon.png" alt="" />
+                <img className="fader-icon" src="../assets/img/fader_icon.png" alt="" />
                 <span>{label}: {valeur} {unite}</span>
             </label>
             
