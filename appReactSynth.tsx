@@ -1,39 +1,6 @@
 import "./style.css";
+import "src/type/synth.ts";
 
-interface  etatSynth { // on verrouille la forme des données pour éviter les bugs de frappe.
-    typeOnde : "sine" | "square" | "sawtooth" | "triangle";
-    freqeOsc : number;
-    cutoff : number;
-    volume : number;
-    isPlaying : boolean;
-}
-
-const etatInitSynth: etatSynth = {
-    typeOnde : "sawtooth",
-    freqeOsc :220,
-    cutoff : 500,
-    volume : 0.5,
-    isPlaying : false
-};
-
-// tableaux d'objets (en TS) , pour stocker liste notes chromatique (sans notes alterees pour linstant!)
-// 1 : structure de lobjet
-interface musicKey {
-    note : string;
-    freq : number;
-    key : string;
-}
-
-// declaration dobjets de type "musicKey"!, en type tableau
-const musicKeys : musicKey[] =[
-{note : "DO", freq: 261.6, key :"a"},
-{note : "RE", freq: 293.7, key :"z"},
-{note : "MI", freq: 329.6,key :"e" },
-{note : "FA", freq: 349.2, key :"r"},
-{note : "SOL", freq: 392.0, key: "t"},
-{note : "LA", freq: 440, key :"y"},
-{note : "SI", freq: 493.88, key :"u"},
-];
 
 
 interface ControlFaderProps { // composant react avec param de type "PROPS" = generique parent passe a enfant des propirete speciifques
