@@ -32,6 +32,8 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
     // ref react vers volume pour debug volume quand appui touche clavier via UseEffect, qui prend en compte letat init du "synth" au 1ER "lancement du composant "synth""!"
     const volumeRef = useRef <number>(etatInitSynth.volume);
 
+    const attackRef = useRef<number>(etatInitSynth.attackMs);
+    const releaseRef = useRef<number>(etatInitSynth.releaseMs);
 
     // ZONE 2 : Les fonctions d'actions et la logique
    
@@ -95,7 +97,7 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
         oldOscFrequence.setTargetAtTime(freqSelKey,temps,0.02);
 
         // puis on ouvre son gain
-        gainRef.current.gain.value=volumeRef.current;
+        //gainRef.current.gain.value=volumeRef.current;
 
         temps = ctxWebAudioAPIRef.current.currentTime;
         const gainAudio = gainRef.current.gain;
@@ -104,10 +106,13 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
         gainAudio.cancelScheduledValues(temps);
 
             // 2. On ancre la valeur courante exacte
-        gainAudio.setValueAtTime(gainAudio.value, temps);
+        gainAudio.setValueAtTime(gainAudio.value, temps); // le son joué actuellement, commence à t=temps et a volume=volume du moteur audio
 
             // 3. On applique la nouvelle cible avec une constante douce (20 ms)
-        gainAudio.setTargetAtTime(volumeRef.current, temps, 0.02);
+       // gainAudio.setTargetAtTime(volumeRef.current, temps, 0.02);
+
+       //3.1 implementation attack avec enveloppe lineaire:linearRampToValueAtTime(volumeCible, tempsCible), temps cible = temps ou pente sarrete a volum cible = temps réeel! mesure par ctxaudio + Attack
+        gainAudio.linearRampToValueAtTime(etat.volume, temps+(attackRef.current/1000));
 
         //setEtat( {...etat, isPlaying:true});
         setEtat((prev) => ({ ...prev,freqeOsc:freqSelKey, isPlaying: true, notePlayed:nomNote })); // on met a jour composant use ref avec nouvelle freq recue de cette note enclecnhée !
@@ -130,7 +135,9 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
             gainAudio.setValueAtTime(gainAudio.value, temps);
 
             // 3. On applique la nouvelle cible avec une constante douce (20 ms)
-            gainAudio.setTargetAtTime(0, temps, 0.02);
+           // gainAudio.setTargetAtTime(0, temps, 0.02);
+
+            gainAudio.linearRampToValueAtTime(0, temps+(releaseRef.current/1000)); // quand on relache touche/note, descente lineaire, a partir de t=temps jusqu a "releaseMs", vers volume=0
 
             setEtat((prev) => ({ ...prev, isPlaying: false}));
             //setEtat ( {...etat, isPlaying : false} );
@@ -264,7 +271,7 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
       window.removeEventListener("keydown", gererToucheDown);
       window.removeEventListener("keyup", gererToucheUp);
     };
-  } , []); // 3. Le tableau vide [] signifie : "exécute ce bloc une seule fois au chargement"
+  } , []); // 3. Le tableau vide [] signifie : "exécute ce bloc une seule fois au chargement", ou sinon variables dans [], des que ces variables maj
    
 
 
@@ -276,6 +283,20 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
 
             {/* Contrôle Play / Stop */}
             <section className="section-clavier">
+               
+               <section className="freq-osc">
+                {/* controle de la frequence de losc*/}
+                <ControlFader
+                id="fader-frequence-osc"
+                label="Fréquence jouée"
+                valeur={etat.freqeOsc}
+                min={60}
+                max={1000}
+                stepValue={1}
+                unite="Hz"
+                onChangeFader={(nouvelleValeur) => changerFreqOsc(nouvelleValeur)}
+                />
+                </section>
                 {    // dans cette section, on parcourt notre tablea de touche avec "map", paeametre "note" et pour chaque "note", on renvoie un btn JSX
                     musicKeys.map ((noteLue) => 
                     (
@@ -291,7 +312,7 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
                         {noteLue.note}    
                         </button>
                     ))
-                }           
+                }          
                
                { /*<button 
                     type="button" 
@@ -303,6 +324,7 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
             </section>
 
             <section className="reglages-section">
+                <h2>Réglages</h2>
                 {/* "controlFader" : 1 =Contrôle du volume */}
                 <ControlFader
                 id="fader-volume"
@@ -315,29 +337,53 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
                 onChangeFader={(val) => changerVolume(val / 100)}
                 />
 
-                {/* controle de la frequence de losc*/}
-                <ControlFader
-                id="fader-frequence-osc"
-                label="Fréquence de l'oscillateur"
-                valeur={etat.freqeOsc}
-                min={60}
-                max={1000}
-                stepValue={1}
-                unite="Hz"
-                onChangeFader={(nouvelleValeur) => changerFreqOsc(nouvelleValeur)}
-                />
+                
 
                 {/* controle de la frequence de cutoff*/}
                 <ControlFader
                 id="fader-frequence-cutoff"
                 label="Filtre Cutoff"
                 valeur={etat.cutoff}
-                min={50}
+                min={200}
                 max={5000}
                 stepValue={10}
                 unite="Hz"
                 onChangeFader={(nouvelleValeur) => changerFreqCutoff(nouvelleValeur)}
                 />
+                <br></br>
+                <h2>Enveloppe <br></br></h2>
+
+                {/* controle de la duree de l'Attack*/}
+                <ControlFader
+                id="fader-attack"
+                label="Attack"
+                valeur={etat.attackMs}
+                min={0}
+                max={2000}
+                stepValue={10}
+                unite="Ms"
+                onChangeFader={(nouvelleValeur) => 
+                {
+                setEtat((prev) => ({ ...prev,attackMs: nouvelleValeur })); 
+                attackRef.current=nouvelleValeur;
+                 }}
+                />
+
+                 {/* controle de la duree de Release*/}
+                <ControlFader
+                id="fader-release"
+                label="Release"
+                valeur={etat.releaseMs}
+                min={0}
+                max={4000}
+                stepValue={10}
+                unite="Ms"
+                 onChangeFader={(nouvelleValeur) => 
+                {
+                setEtat((prev) => ({ ...prev,releaseMs: nouvelleValeur })); 
+                releaseRef.current=nouvelleValeur;
+                 }}
+                ></ControlFader>
 
             </section>
            

@@ -5,6 +5,8 @@ export interface  etatSynth { // on verrouille la forme des données pour évite
     volume : number;
     isPlaying : boolean;
     notePlayed: string | null;
+    attackMs : number;
+    releaseMs: number;
 }
 
 
