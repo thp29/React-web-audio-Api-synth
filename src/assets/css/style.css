@@ -70,7 +70,7 @@ h2 {
 /* ==========================================================================
    Section Clavier Musical
    ========================================================================== */
-.section-clavier {
+.section-clavier, .save-button {
   margin-bottom: 2.25rem;
   padding: 1.25rem 1.5rem 1.5rem 1.5rem;
   background-color: var(--bg-keyboard-bed);
@@ -88,7 +88,7 @@ h2 {
 }
 
 /* La touche blanche de piano */
-.section-clavier button {
+.section-clavier button , .save-button button {
   flex: 1;
   min-width: 3rem; /*niveau AAA WCAG Boutons taille access cognitive*/
   min-height: 3rem;
@@ -226,6 +226,13 @@ h2 {
   transform: scale(1.15);
 }
 
+
+#btn-save 
+{
+  width: 70%;
+  margin: 0.5rem;
+  background : var(--text-main);
+}
 /* ==========================================================================
    Accessibilité Clavier & Préférences
    ========================================================================== */

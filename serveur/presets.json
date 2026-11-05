@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "date": "05/11/2026 21:09:33",
+    "presetSettings": {
+      "typeOnde": "sawtooth",
+      "freqeOsc": 220,
+      "cutoff": 500,
+      "volume": 0.5,
+      "isPlaying": false,
+      "notePlayed": null,
+      "attackMs": 50,
+      "releaseMs": 100
+    }
+  },
+  {
+    "id": 2,
+    "date": "05/11/2026 21:09:35",
+    "presetSettings": {
+      "typeOnde": "sawtooth",
+      "freqeOsc": 220,
+      "cutoff": 500,
+      "volume": 0.5,
+      "isPlaying": false,
+      "notePlayed": null,
+      "attackMs": 680,
+      "releaseMs": 1000
+    }
+  },
+  {
+    "id": 3,
+    "date": "05/11/2026 21:10:55",
+    "presetSettings": {
+      "typeOnde": "sawtooth",
+      "freqeOsc": 220,
+      "cutoff": 500,
+      "volume": 0.5,
+      "isPlaying": false,
+      "notePlayed": null,
+      "attackMs": 680,
+      "releaseMs": 1910
+    }
+  },
+  {
+    "id": 4,
+    "date": "05/11/2026 21:12:07",
+    "presetSettings": {
+      "typeOnde": "sawtooth",
+      "freqeOsc": 220,
+      "cutoff": 500,
+      "volume": 0.5,
+      "isPlaying": false,
+      "notePlayed": null,
+      "attackMs": 530,
+      "releaseMs": 1040
+    }
+  }
+]

@@ -18,6 +18,8 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
    
     // ZONE 1 : Les états (useState)
     const [etat, setEtat] = useState<etatSynth>(etatInitSynth); // fonction react qu on appelle avec param defaut "etatinitsynth" ici ! et retourne valeur de cet etat passe en param et une fonction pour changer cette donnee
+    const [msgSauvegarde, setMsgSave]=useState<string>("");
+
 
     //Zone 1.1 les references audio (via userRef)
     const ctxWebAudioAPIRef = useRef <AudioContext | null>(null); // "audio context", de web audio API, = source clock pour audio et "calculs" audio -> ici = reference vers ojbet "moteur audio"
@@ -34,6 +36,8 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
 
     const attackRef = useRef<number>(etatInitSynth.attackMs);
     const releaseRef = useRef<number>(etatInitSynth.releaseMs);
+
+
 
     // ZONE 2 : Les fonctions d'actions et la logique
    
@@ -274,6 +278,36 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
   } , []); // 3. Le tableau vide [] signifie : "exécute ce bloc une seule fois au chargement", ou sinon variables dans [], des que ces variables maj
    
 
+  // fonction envoie requet post a node/express serveur avec donnees "etat" pour save preset en local
+  const sauvegarderPreset = async () => 
+    {
+        try 
+        { // fetch va dans "catch", que si coupure reseau !
+
+            const reponseServeur = await fetch('http://localhost:3001/api/preset', {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(etat) //pour faire "circuler" objets js sur "reseau" => oblige de parse en texte JSON
+            });
+
+            if (!reponseServeur.ok) {
+            throw new Error ('erreur : ' + reponseServeur.status); // forcer a aller dans bloc catch, si erreur serveur et serveur pas "eteint ou deco"!
+
+            }
+            console.log(reponseServeur);
+            //mis a jour react pour vue client du msg sauvegarde echec ou reussite
+            setMsgSave("Sauvegarde réussie");
+            /* reset du msg sauvegarde apres 5s*/
+            {setTimeout(()=>setMsgSave(""),5000) } /*  set timeout execute callback = son premier param, apres time en ms (2e param)*/
+        }
+        catch (erreur)
+        {
+            console.error("Sauvegarde echouée"+ erreur);
+            setMsgSave("Sauvegarde échouée");
+        }
+    };
+
+
 
     // ZONE 3 : Le rendu visuel (l'équivalent du HTML)
     // {} dans les accolades en JSX = -> code javascript
@@ -386,7 +420,19 @@ export const MiniSynthe = () => { // composant "react" , qui renvoie du jsx (psu
                 ></ControlFader>
 
             </section>
-           
+
+            <section className="save-button">
+                <button
+                type="button" 
+                key="ID"
+                onClick={sauvegarderPreset}
+                id="btn-save">
+                Sauvegarder les réglages actuel, en local
+                </button>
+            </section>
+            {/*affichage sauvegarde réussie ou pas*/}
+           <p>{msgSauvegarde}
+                </p>
         </main>
     );
 
